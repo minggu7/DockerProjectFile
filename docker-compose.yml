@@ -1,0 +1,57 @@
+services:
+  registry:
+    image: registry:2.8.3
+    ports:
+      - 5001:5000
+    volumes:
+      - "./registry-data:/var/lib/registry"
+  manager:
+    image: docker:26.1.2-dind
+    privileged: true
+    tty: true
+    ports:
+      - 8080:80
+      - 9000:9000
+    depends_on:
+      - registry
+    expose:
+      - 3375
+    command: "--insecure-registry registry:5000"
+    volumes:
+      - "./stack:/stack"
+  worker01:
+    image: docker:26.1.2-dind
+    privileged: true
+    tty: true
+    depends_on:
+      - manager
+      - registry
+    expose:
+      - 7946
+      - 7946/udp
+      - 4789/udp
+    command: "--insecure-registry registry:5000"
+  worker02:
+    image: docker:26.1.2-dind
+    privileged: true
+    tty: true
+    depends_on:
+      - manager
+      - registry
+    expose:
+      - 7946
+      - 7946/udp
+      - 4789/udp
+    command: "--insecure-registry registry:5000"
+  worker03:
+    image: docker:26.1.2-dind
+    privileged: true
+    tty: true
+    depends_on:
+      - manager
+      - registry
+    expose:
+      - 7946
+      - 7946/udp
+      - 4789/udp
+    command: "--insecure-registry registry:5000"

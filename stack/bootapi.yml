@@ -1,0 +1,26 @@
+services:
+  nginx:
+    image: nginx
+    deploy:
+      replicas: 3
+      placement:
+        constraints: [node.role != manager]
+    environment:
+      BACKEND_HOST: greeting:8000
+    depends_on:
+      - api
+    networks:
+      - bootnet
+
+  api:
+    image: registry:5000/boot-docker:latest
+    deploy:
+      replicas: 3
+      placement:
+        constraints: [node.role != manager]
+    networks:
+      - bootnet
+
+networks:
+  bootnet:
+    driver: overlay
